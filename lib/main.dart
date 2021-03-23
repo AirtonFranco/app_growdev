@@ -12,6 +12,11 @@ void main() {
       primarySwatch: azulGrowdev,
       accentColor: laranjaGrowdev,
     ),
-    home: HomePage(),
+    initialRoute: '/',
+    routes: {
+      '/': (_) => HomePage(),
+      '/home-page': (_) => HomePage(),
+      '/card-page': (_) => CardPage(),
+    },
   ));
 }

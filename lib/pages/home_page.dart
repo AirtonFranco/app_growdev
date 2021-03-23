@@ -12,11 +12,14 @@ class HomePage extends StatelessWidget {
         brightness: Brightness.dark,
         actions: [
           IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              onPressed: () {})
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/card-page');
+            },
+          )
         ],
       ),
       drawer: Drawer(
