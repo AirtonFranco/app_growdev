@@ -1,5 +1,8 @@
+import 'package:app_growdev/pages/home_page.dart';
 import 'package:app_growdev/theme/colors.dart';
 import 'package:flutter/material.dart';
+
+import 'pages/card_page.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -9,5 +12,6 @@ void main() {
       primarySwatch: azulGrowdev,
       accentColor: laranjaGrowdev,
     ),
+    home: HomePage(),
   ));
 }
