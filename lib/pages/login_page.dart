@@ -1,16 +1,26 @@
+import 'package:app_growdev/controllers/login_controller.dart';
 import 'package:app_growdev/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 
 var checked = true;
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final formKey = GlobalKey<FormState>();
+  final controller = LoginController();
+  String? email;
+  String? pass;
+  void _doLogin() {
+    if (!formKey.currentState!.validate()) return;
+    formKey.currentState!.save();
+    controller.fazerLogin(email!, pass!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,12 +73,21 @@ class _LoginPageState extends State<LoginPage> {
                 height: 40,
               ),
               Form(
+                key: formKey,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Preencha o Email';
+                          if (!EmailValidator.validate(value))
+                            return 'Email inválido';
+                          return null;
+                        },
+                        onSaved: (value) => email = value,
+                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: 'E-mail',
                           labelStyle: TextStyle(
@@ -91,6 +110,12 @@ class _LoginPageState extends State<LoginPage> {
                         height: 16,
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Preencha a Senha';
+                        },
+                        onSaved: (value) => pass = value,
+                        keyboardType: TextInputType.text,
+                        obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Senha',
                           labelStyle: TextStyle(
@@ -152,7 +177,9 @@ class _LoginPageState extends State<LoginPage> {
                         height: 16,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _doLogin();
+                        },
                         child: Text('Entrar'),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(

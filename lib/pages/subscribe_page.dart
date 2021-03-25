@@ -1,4 +1,6 @@
+import 'package:app_growdev/controllers/subscribe_controller.dart';
 import 'package:app_growdev/theme/colors.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 class SubscribePage extends StatefulWidget {
@@ -9,6 +11,17 @@ class SubscribePage extends StatefulWidget {
 }
 
 class _SubscriberPageState extends State<SubscribePage> {
+  final formKey = GlobalKey<FormState>();
+  final controller = SubscribeController();
+  String? nome;
+  String? email;
+  String? pass;
+  void _doSingUp() {
+    if (!formKey.currentState!.validate()) return;
+    formKey.currentState!.save();
+    controller.fazerCadastro(nome!, email!, pass!);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,12 +48,20 @@ class _SubscriberPageState extends State<SubscribePage> {
                 height: 40,
               ),
               Form(
+                key: formKey,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Preencha o Nome';
+
+                          return null;
+                        },
+                        onSaved: (value) => nome = value,
+                        keyboardType: TextInputType.name,
                         decoration: InputDecoration(
                           labelText: 'Nome',
                           labelStyle: TextStyle(
@@ -63,6 +84,14 @@ class _SubscriberPageState extends State<SubscribePage> {
                         height: 16,
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Preencha o Email';
+                          if (!EmailValidator.validate(value))
+                            return 'Email inválido';
+                          return null;
+                        },
+                        onSaved: (value) => email = value,
+                        keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: 'E-mail',
                           labelStyle: TextStyle(
@@ -85,6 +114,14 @@ class _SubscriberPageState extends State<SubscribePage> {
                         height: 16,
                       ),
                       TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) return 'Preencha a Senha';
+
+                          return null;
+                        },
+                        onSaved: (value) => pass = value,
+                        keyboardType: TextInputType.text,
+                        obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Senha',
                           labelStyle: TextStyle(
@@ -109,7 +146,9 @@ class _SubscriberPageState extends State<SubscribePage> {
                         height: 24,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _doSingUp();
+                        },
                         child: Text('Criar Conta'),
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
