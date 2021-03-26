@@ -1,8 +1,32 @@
-import 'package:app_growdev/theme/colors.dart';
+import 'package:app_growdev/controllers/home_controller.dart';
+import 'package:app_growdev/pages/card_page.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+import 'package:app_growdev/theme/colors.dart';
+
+class HomePage extends StatefulWidget {
+  final String? nome;
+  final String? email;
+  final String? token;
+  const HomePage({
+    Key? key,
+    this.nome,
+    this.email,
+    this.token,
+  }) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final controller = HomeController();
+  @override
+  void initState() {
+    super.initState();
+    print('HOME PAGE');
+    controller.buscarTodosCards(widget.token!);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +41,11 @@ class HomePage extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed('/card-page');
+              // Navigator.of(context).pushNamed('/card-page');
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => CardPage(token: widget.token!)));
             },
           )
         ],
@@ -29,8 +57,8 @@ class HomePage extends StatelessWidget {
             Container(
               color: azulGrowdev,
               child: UserAccountsDrawerHeader(
-                accountName: Text('Nome Usuario'),
-                accountEmail: Text('usuario@email.com'),
+                accountName: Text(widget.nome!),
+                accountEmail: Text(widget.email!),
                 currentAccountPicture: CircleAvatar(
                   child: Icon(
                     Icons.person,

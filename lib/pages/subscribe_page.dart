@@ -3,6 +3,9 @@ import 'package:app_growdev/theme/colors.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
+var _isObsecurePass = true;
+var _isLoading = false;
+
 class SubscribePage extends StatefulWidget {
   SubscribePage({Key? key}) : super(key: key);
 
@@ -17,9 +20,37 @@ class _SubscriberPageState extends State<SubscribePage> {
   String? email;
   String? pass;
   void _doSingUp() {
-    if (!formKey.currentState!.validate()) return;
+    setState(() {
+      _isLoading = true;
+    });
+    if (!formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
     formKey.currentState!.save();
-    controller.fazerCadastro(nome!, email!, pass!);
+    controller.fazerCadastro(nome!, email!, pass!).then((value) {
+      if (!value) {
+        setState(() {
+          _isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Falha ao cadastrar. Tente novamente.',
+              style: TextStyle(
+                fontSize: 17,
+              ),
+            ),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: laranjaGrowdev,
+          ),
+        );
+      } else {
+        Navigator.of(context).popAndPushNamed('/home-page');
+      }
+    });
   }
 
   @override
@@ -121,7 +152,7 @@ class _SubscriberPageState extends State<SubscribePage> {
                         },
                         onSaved: (value) => pass = value,
                         keyboardType: TextInputType.text,
-                        obscureText: true,
+                        obscureText: _isObsecurePass,
                         decoration: InputDecoration(
                           labelText: 'Senha',
                           labelStyle: TextStyle(
@@ -130,9 +161,25 @@ class _SubscriberPageState extends State<SubscribePage> {
                           ),
                           filled: true,
                           fillColor: Colors.white24,
-                          suffixIcon: IconButton(
-                              icon: Icon(Icons.remove_red_eye),
-                              onPressed: () {}),
+                          suffixIcon: _isObsecurePass
+                              ? IconButton(
+                                  splashRadius: 0.1,
+                                  icon: Icon(Icons.visibility),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObsecurePass = false;
+                                    });
+                                  },
+                                )
+                              : IconButton(
+                                  splashRadius: 0.1,
+                                  icon: Icon(Icons.visibility_off),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isObsecurePass = true;
+                                    });
+                                  },
+                                ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide(
@@ -145,23 +192,30 @@ class _SubscriberPageState extends State<SubscribePage> {
                       const SizedBox(
                         height: 24,
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          _doSingUp();
-                        },
-                        child: Text('Criar Conta'),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            side: BorderSide(
-                              width: 0,
-                              style: BorderStyle.none,
+                      Container(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _doSingUp();
+                          },
+                          child: _isLoading
+                              ? CircularProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                )
+                              : Text('Criar Conta'),
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                              side: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
                             ),
-                          ),
-                          primary: laranjaGrowdev,
-                          textStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                            primary: laranjaGrowdev,
+                            textStyle: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
