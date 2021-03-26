@@ -92,10 +92,10 @@ class Api {
   }
 
   Future buscarCardId(int id) async {
+    dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.get('/cards/$id');
       print(response.data);
-
       return response.data;
     } on DioError catch (e) {
       print(e);
@@ -104,7 +104,7 @@ class Api {
   }
 
   Future criarCard(CardModel card) async {
-    print(card.toJson());
+    dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.post(
         '/cards',
@@ -118,8 +118,8 @@ class Api {
     return null;
   }
 
-/*
   Future atualizarCard(int id, String titulo, String conteudo) async {
+    dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.put(
         '/cards/$id',
@@ -134,6 +134,7 @@ class Api {
   }
 
   Future deletarCard(int id) async {
+    dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.delete('/cards/$id');
       print(response.data);
@@ -142,5 +143,5 @@ class Api {
       print(e);
     }
     return null;
-  } */
+  }
 }

@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             ),
             onPressed: () {
               // Navigator.of(context).pushNamed('/card-page');
-              Navigator.pushReplacement(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => CardPage(token: widget.token!)));
