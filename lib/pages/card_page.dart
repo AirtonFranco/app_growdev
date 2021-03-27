@@ -1,3 +1,5 @@
+import 'package:app_growdev/controllers/home_controller.dart';
+import 'package:app_growdev/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app_growdev/controllers/card_controller.dart';
@@ -15,6 +17,7 @@ class CardPage extends StatefulWidget {
 }
 
 class _CardPageState extends State<CardPage> {
+  bool isLoading = false;
   String? title;
   String? content;
   final formKey = GlobalKey<FormState>();
@@ -22,12 +25,21 @@ class _CardPageState extends State<CardPage> {
   final controller = CardController();
 
   void salvar() async {
-    if (!formKey.currentState!.validate()) return;
+    isLoading = true;
+    setState(() {});
+    if (!formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
     formKey.currentState!.save();
-    print(widget.token!);
-    print(title!);
-    print(content!);
-    await controller.criarCard(widget.token!, title!, content!);
+
+    await controller.criarCard(widget.token!, title!, content!).then((value) {
+      if (!value) return;
+
+      Navigator.pop(context);
+    });
   }
 
   @override
@@ -77,19 +89,26 @@ class _CardPageState extends State<CardPage> {
                   ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  salvar();
-                },
-                child: Text('Salvar'),
-                style: ElevatedButton.styleFrom(
-                  textStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  primary: laranjaGrowdev,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+              Container(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: () {
+                    salvar();
+                  },
+                  child: isLoading
+                      ? CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        )
+                      : Text('Salvar'),
+                  style: ElevatedButton.styleFrom(
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    primary: laranjaGrowdev,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
                   ),
                 ),
               ),

@@ -77,12 +77,13 @@ class Api {
   }
 
   Future buscarTodosCards() async {
-    print('BUSCANDO CADS Token: $token');
+    print("BUSCANDO TODOS OS CARDS");
     try {
       dio.options.headers["Authorization"] = "Bearer ${token}";
       var response = await dio.get(
         '/cards',
       );
+
       print(response.data);
       return response;
     } on DioError catch (e) {
@@ -92,11 +93,12 @@ class Api {
   }
 
   Future buscarCardId(int id) async {
+    print('BUSCANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.get('/cards/$id');
       print(response.data);
-      return response.data;
+      return response;
     } on DioError catch (e) {
       print(e);
     }
@@ -104,6 +106,7 @@ class Api {
   }
 
   Future criarCard(CardModel card) async {
+    print('CRIANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.post(
@@ -111,7 +114,7 @@ class Api {
         data: card.toJson(),
       );
       print(response.data);
-      return response.data;
+      return response;
     } on DioError catch (e) {
       print(e.message);
     }
@@ -119,6 +122,7 @@ class Api {
   }
 
   Future atualizarCard(int id, String titulo, String conteudo) async {
+    print('ATUALIZANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.put(
@@ -126,7 +130,7 @@ class Api {
         data: CardModel(title: titulo, content: conteudo).toJson(),
       );
       print(response.data);
-      return response.data;
+      return response;
     } on DioError catch (e) {
       print(e);
     }
@@ -134,11 +138,12 @@ class Api {
   }
 
   Future deletarCard(int id) async {
+    print('DELETANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.delete('/cards/$id');
       print(response.data);
-      return response.data;
+      return response;
     } on DioError catch (e) {
       print(e);
     }

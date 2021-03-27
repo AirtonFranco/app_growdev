@@ -1,4 +1,5 @@
 import 'package:app_growdev/controllers/home_controller.dart';
+import 'package:app_growdev/models/card_model.dart';
 import 'package:app_growdev/pages/card_page.dart';
 import 'package:flutter/material.dart';
 
@@ -21,11 +22,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = HomeController();
+  List<CardModel>? lista = [];
+  Future<List<CardModel>>? futurelista;
   @override
   void initState() {
     super.initState();
-    print('HOME PAGE');
-    controller.buscarTodosCards(widget.token!);
+    buscarTodosCards();
+  }
+
+  void buscarTodosCards() async {
+    //  lista = await controller.buscarTodosCards(widget.token!);
+    futurelista = controller.buscarTodosCards(widget.token!);
+    setState(() {});
+  }
+
+  void deletarCard(CardModel card) async {
+    await controller.deletarCard(widget.token!, card.id!).then((value) {
+      if (value) {
+        buscarTodosCards();
+      }
+    });
+  }
+
+  Future<void> _refresh() async {
+    List<CardModel> listaRefresh =
+        await controller.buscarTodosCards(widget.token!);
+    setState(() {
+      futurelista = Future.value(listaRefresh);
+    });
   }
 
   @override
@@ -84,102 +108,119 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: 4,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: laranjaGrowdev,
-                    width: 2.0,
-                  )),
-              child: Container(
-                height: MediaQuery.of(context).size.width * 0.55,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
+      body: FutureBuilder(
+          future: futurelista,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              lista = (snapshot.data as List<CardModel>);
+              return RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView.builder(
+                  itemCount: lista!.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        elevation: 8,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
                               color: laranjaGrowdev,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                style: BorderStyle.solid,
-                                width: 2,
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '1',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
+                              width: 2.0,
+                            )),
+                        child: InkWell(
+                          onTap: () {},
+                          child: Container(
+                            height: MediaQuery.of(context).size.width * 0.55,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: laranjaGrowdev,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            style: BorderStyle.solid,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${lista![index].id!}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          lista![index].title!,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Divider(
+                                    thickness: 1,
+                                    color: Colors.black,
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      lista![index].content!,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {},
+                                        child: Text(
+                                          'Editar',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          deletarCard(lista![index]);
+                                        },
+                                        child: Text(
+                                          'Remover',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                          Expanded(
-                            child: Text(
-                              'Um titulo qualquer para o card que o aluno vai colocar',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                              textAlign: TextAlign.center,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(
-                        thickness: 1,
-                        color: Colors.black,
-                      ),
-                      Expanded(
-                        child: Text(
-                          '''
-Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in
-                          ''',
-                          overflow: TextOverflow.fade,
                         ),
                       ),
-                      Row(
-                        children: [
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Editar',
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Remover',
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            }
+          }),
     );
   }
 }
