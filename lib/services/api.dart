@@ -121,13 +121,13 @@ class Api {
     return null;
   }
 
-  Future atualizarCard(int id, String titulo, String conteudo) async {
+  Future editarCard(CardModel card) async {
     print('ATUALIZANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.put(
-        '/cards/$id',
-        data: CardModel(title: titulo, content: conteudo).toJson(),
+        '/cards/${card.id}',
+        data: CardModel(title: card.title, content: card.title).toJson(),
       );
       print(response.data);
       return response;

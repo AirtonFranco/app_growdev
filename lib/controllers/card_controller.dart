@@ -9,4 +9,12 @@ class CardController {
     if (response.statusCode == 200) return true;
     return false;
   }
+
+  Future<bool> editarCard(
+      String token, int id, String title, String content) async {
+    Response response = await Api(token: token)
+        .editarCard(CardModel(id: id, title: title, content: content));
+    if (response.statusCode == 200) return true;
+    return false;
+  }
 }

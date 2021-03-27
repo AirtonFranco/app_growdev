@@ -3,6 +3,7 @@ import 'package:app_growdev/pages/home_page.dart';
 import 'package:app_growdev/theme/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:hive/hive.dart';
 
 var _checked = true;
 var _isObsecurePass = true;
@@ -16,8 +17,36 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   final controller = LoginController();
+  final box = Hive.box('user_info');
+
   String? email;
   String? pass;
+
+  @override
+  void initState() {
+    super.initState();
+    isLogged();
+  }
+
+  void isLogged() {
+    if (box.get('isLogged', defaultValue: false)) {
+/*       email = box.get('email');
+      name = box.get('name');
+      token = box.get('token'); */
+      Future.delayed(Duration.zero, () {
+        Navigator.pushReplacementNamed(context, '/home-page');
+        /*  Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => HomePage(
+                      nome: name,
+                      email: email,
+                      token: token,
+                    )),
+            (route) => false); */
+      });
+    }
+  }
 
   void _doLogin() {
     setState(() {
@@ -32,10 +61,10 @@ class _LoginPageState extends State<LoginPage> {
     formKey.currentState!.save();
 
     controller.fazerLogin(email!, pass!).then((value) {
+      setState(() {
+        _isLoading = false;
+      });
       if (!value) {
-        setState(() {
-          _isLoading = false;
-        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -49,15 +78,18 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       } else {
-        //Navigator.pushNamed(context, '/home-page');
-        Navigator.pushReplacement(
+        box.put('name', controller.user!.name);
+        box.put('email', controller.user!.email);
+        box.put('token', controller.token!);
+        Navigator.pushReplacementNamed(context, '/home-page');
+        /* Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) => HomePage(
                       nome: controller.user!.name,
                       email: controller.user!.email,
                       token: controller.token!,
-                    )));
+                    ))); */
       }
     });
   }
@@ -207,10 +239,10 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
 
-                        value: _checked,
+                        value: box.get('isLogged', defaultValue: false),
                         onChanged: (newValue) {
                           setState(() {
-                            _checked = newValue!;
+                            box.put('isLogged', newValue!);
                           });
                         },
                         controlAffinity: ListTileControlAffinity

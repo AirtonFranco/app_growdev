@@ -1,15 +1,18 @@
 import 'package:app_growdev/controllers/home_controller.dart';
+import 'package:app_growdev/models/card_model.dart';
 import 'package:app_growdev/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 import 'package:app_growdev/controllers/card_controller.dart';
 import 'package:app_growdev/theme/colors.dart';
+import 'package:hive/hive.dart';
 
 class CardPage extends StatefulWidget {
-  String? token;
+  CardModel? card;
+
   CardPage({
     Key? key,
-    this.token,
+    this.card,
   }) : super(key: key);
 
   @override
@@ -17,12 +20,19 @@ class CardPage extends StatefulWidget {
 }
 
 class _CardPageState extends State<CardPage> {
+  final box = Hive.box('user_info');
+  String? token;
   bool isLoading = false;
   String? title;
   String? content;
   final formKey = GlobalKey<FormState>();
-
   final controller = CardController();
+
+  @override
+  void initState() {
+    super.initState();
+    token = box.get('token');
+  }
 
   void salvar() async {
     isLoading = true;
@@ -35,10 +45,10 @@ class _CardPageState extends State<CardPage> {
     }
     formKey.currentState!.save();
 
-    await controller.criarCard(widget.token!, title!, content!).then((value) {
+    await controller.criarCard(token!, title!, content!).then((value) {
       if (!value) return;
 
-      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/home-page');
     });
   }
 
