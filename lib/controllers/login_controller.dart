@@ -9,12 +9,17 @@ class LoginController {
   Future<bool> fazerLogin(String email, String senha) async {
     Response response =
         await service.fazerLogin(UserModel(email: email, password: senha));
-    if (response.statusCode == null) return false; //BUG
-    if (response.statusCode == 200) {
-      user = Api.fromMap(response.data).user;
-      token = Api.fromMap(response.data).token;
-      return true;
+    try {
+      if (response.statusCode == 200) {
+        user = Api.fromMap(response.data).user;
+        token = Api.fromMap(response.data).token;
+        return true;
+      }
+    } catch (e) {
+      print(e);
+      return false;
     }
+
     return false;
   }
 }

@@ -2,6 +2,7 @@ import 'package:app_growdev/controllers/subscribe_controller.dart';
 import 'package:app_growdev/theme/colors.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 var _isObsecurePass = true;
 var _isLoading = false;
@@ -16,6 +17,7 @@ class SubscribePage extends StatefulWidget {
 class _SubscriberPageState extends State<SubscribePage> {
   final formKey = GlobalKey<FormState>();
   final controller = SubscribeController();
+  final box = Hive.box('user_info');
   String? nome;
   String? email;
   String? pass;
@@ -48,6 +50,9 @@ class _SubscriberPageState extends State<SubscribePage> {
           ),
         );
       } else {
+        box.put('name', nome!);
+        box.put('email', email!);
+        box.put('token', controller.token!);
         Navigator.of(context).popAndPushNamed('/home-page');
       }
     });

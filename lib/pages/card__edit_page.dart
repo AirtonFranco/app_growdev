@@ -2,21 +2,19 @@ import 'package:app_growdev/controllers/home_controller.dart';
 import 'package:app_growdev/models/card_model.dart';
 import 'package:app_growdev/pages/home_page.dart';
 import 'package:flutter/material.dart';
-
 import 'package:app_growdev/controllers/card_controller.dart';
 import 'package:app_growdev/theme/colors.dart';
 import 'package:hive/hive.dart';
 
-class CardPage extends StatefulWidget {
-  CardPage({
-    Key? key,
-  }) : super(key: key);
+class CardEditPage extends StatefulWidget {
+  CardModel? card;
+  CardEditPage({Key? key, this.card}) : super(key: key);
 
   @override
-  _CardPageState createState() => _CardPageState();
+  _CardEditPageState createState() => _CardEditPageState();
 }
 
-class _CardPageState extends State<CardPage> {
+class _CardEditPageState extends State<CardEditPage> {
   final box = Hive.box('user_info');
   String? token;
   bool isLoading = false;
@@ -42,7 +40,9 @@ class _CardPageState extends State<CardPage> {
     }
     formKey.currentState!.save();
 
-    await controller.criarCard(token!, title!, content!).then((value) {
+    await controller
+        .editarCard(token!, widget.card!.id!, title!, content!)
+        .then((value) {
       if (!value) return;
 
       Navigator.pushReplacementNamed(context, '/home-page');
@@ -54,7 +54,7 @@ class _CardPageState extends State<CardPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Card: Novo'),
+        title: Text('Card: Editar'),
         brightness: Brightness.dark,
       ),
       body: Form(
@@ -68,6 +68,7 @@ class _CardPageState extends State<CardPage> {
                 child: Column(
                   children: [
                     TextFormField(
+                      initialValue: widget.card!.title,
                       validator: (value) {
                         if (value!.isEmpty) return 'Coloque um titulo';
                         return null;
@@ -82,6 +83,7 @@ class _CardPageState extends State<CardPage> {
                       height: 16,
                     ),
                     TextFormField(
+                      initialValue: widget.card!.content,
                       maxLines: 10,
                       validator: (value) {
                         if (value!.isEmpty) return 'Coloque um conteudo';

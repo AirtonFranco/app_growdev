@@ -1,5 +1,6 @@
 import 'package:app_growdev/controllers/home_controller.dart';
 import 'package:app_growdev/models/card_model.dart';
+import 'package:app_growdev/pages/card__edit_page.dart';
 import 'package:app_growdev/pages/card_page.dart';
 import 'package:flutter/material.dart';
 
@@ -203,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      CardPage(
+                                                      CardEditPage(
                                                         card: lista![index],
                                                       )));
                                         },

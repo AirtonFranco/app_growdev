@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:app_growdev/models/card_model.dart';
 import 'package:dio/dio.dart';
-
 import 'package:app_growdev/controllers/login_controller.dart';
 import 'package:app_growdev/models/user_model.dart';
 
@@ -76,7 +74,7 @@ class Api {
     }
   }
 
-  Future buscarTodosCards() async {
+  Future? buscarTodosCards() async {
     print("BUSCANDO TODOS OS CARDS");
     try {
       dio.options.headers["Authorization"] = "Bearer ${token}";
@@ -92,7 +90,7 @@ class Api {
     return null;
   }
 
-  Future buscarCardId(int id) async {
+  Future? buscarCardId(int id) async {
     print('BUSCANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
@@ -102,10 +100,9 @@ class Api {
     } on DioError catch (e) {
       print(e);
     }
-    return null;
   }
 
-  Future criarCard(CardModel card) async {
+  Future? criarCard(CardModel card) async {
     print('CRIANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
@@ -118,26 +115,24 @@ class Api {
     } on DioError catch (e) {
       print(e.message);
     }
-    return null;
   }
 
-  Future editarCard(CardModel card) async {
+  Future? editarCard(CardModel card) async {
     print('ATUALIZANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
       var response = await dio.put(
         '/cards/${card.id}',
-        data: CardModel(title: card.title, content: card.title).toJson(),
+        data: CardModel(title: card.title, content: card.content).toJson(),
       );
       print(response.data);
       return response;
     } on DioError catch (e) {
       print(e);
     }
-    return null;
   }
 
-  Future deletarCard(int id) async {
+  Future? deletarCard(int id) async {
     print('DELETANDO CARD');
     dio.options.headers["Authorization"] = "Bearer ${token}";
     try {
@@ -147,6 +142,5 @@ class Api {
     } on DioError catch (e) {
       print(e);
     }
-    return null;
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
 
-var _checked = true;
 var _isObsecurePass = true;
 var _isLoading = false;
 
@@ -30,20 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void isLogged() {
     if (box.get('isLogged', defaultValue: false)) {
-/*       email = box.get('email');
-      name = box.get('name');
-      token = box.get('token'); */
       Future.delayed(Duration.zero, () {
         Navigator.pushReplacementNamed(context, '/home-page');
-        /*  Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HomePage(
-                      nome: name,
-                      email: email,
-                      token: token,
-                    )),
-            (route) => false); */
       });
     }
   }
@@ -82,14 +69,6 @@ class _LoginPageState extends State<LoginPage> {
         box.put('email', controller.user!.email);
         box.put('token', controller.token!);
         Navigator.pushReplacementNamed(context, '/home-page');
-        /* Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => HomePage(
-                      nome: controller.user!.name,
-                      email: controller.user!.email,
-                      token: controller.token!,
-                    ))); */
       }
     });
   }

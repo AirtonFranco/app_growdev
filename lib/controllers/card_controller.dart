@@ -6,7 +6,13 @@ class CardController {
   Future<bool> criarCard(String token, String title, String content) async {
     Response response = await Api(token: token)
         .criarCard(CardModel(title: title, content: content));
-    if (response.statusCode == 200) return true;
+    try {
+      if (response.statusCode == 200) return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
     return false;
   }
 
@@ -14,7 +20,12 @@ class CardController {
       String token, int id, String title, String content) async {
     Response response = await Api(token: token)
         .editarCard(CardModel(id: id, title: title, content: content));
-    if (response.statusCode == 200) return true;
+    try {
+      if (response.statusCode == 200) return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
     return false;
   }
 }
