@@ -132,7 +132,6 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextFormField(
-                        initialValue: 'thobias@gmail.com',
                         validator: (value) {
                           if (value!.isEmpty) return 'Preencha o Email';
                           if (!EmailValidator.validate(value))
@@ -163,7 +162,6 @@ class _LoginPageState extends State<LoginPage> {
                         height: 16,
                       ),
                       TextFormField(
-                        initialValue: 'thobias@2021',
                         validator: (value) {
                           if (value!.isEmpty) return 'Preencha a Senha';
                         },
